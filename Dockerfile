@@ -3,6 +3,7 @@ FROM cm2network/steamcmd:latest
 LABEL maintainer="jesse@weisner.ca"
 
 ENV INSTALL_DIR /data
+ENV LD_LIBRARY_PATH /home/steam/steamcmd/linux32
 
 USER root
 
