@@ -9,7 +9,7 @@ before_script:
   - docker ps -a
 
 script:
-  - docker exec ${TRAVIS_COMMIT} /home/steam/steamcmd/linux32/steamcmd +quit
+  - docker exec ${TRAVIS_COMMIT} echo "Hello from docker-steamcmd"
 
 on:
   branch: master
