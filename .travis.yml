@@ -1,0 +1,15 @@
+language: generic
+
+services:
+  - docker
+
+before_script:
+  - docker build -t jwei/docker-steamcmd .
+  - docker run --rm --name ${TRAVIS_COMMIT} -d jwei/docker-steamcmd /bin/sh -c "tail -f /dev/null"
+  - docker ps -a
+
+script:
+  - docker exec ${TRAVIS_COMMIT} /home/steam/steamcmd/linux32/steamcmd +quit
+
+on:
+  branch: master
