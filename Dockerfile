@@ -1,32 +1,28 @@
-FROM cm2network/steamcmd:latest
+FROM bcit/centos:8-supervisord-latest
 
 LABEL maintainer="jesse@weisner.ca"
 
-ENV INSTALL_DIR /data
-ENV LD_LIBRARY_PATH /home/steam/steamcmd/linux32
+ENV HOME /home/steam
 
-USER root
-
-RUN set -x \
-    && apt-get update \
-    && apt-get install -y --no-install-recommends --no-install-suggests \
+RUN useradd steam \
+ && yum -y --setopt tsflags=nodocs --setopt timeout=5 install \
+        file \
+        glibc.i686 \
+        libstdc++.i686 \
         rsync \
- && mkdir /data \
- && chown steam:steam /data \
- && apt-get clean autoclean \
- && apt-get autoremove -y \
- && rm -rf /var/lib/{apt,dpkg,cache,log}/
+        unzip \
+        zip \
+ && mkdir /steamlibrary /home/steam/steamcmd \
+ && chown steam:steam /steamlibrary /home/steam/steamcmd
 
-# Add Tini
-ADD https://github.com/krallin/tini/releases/download/v0.18.0/tini /tini
-RUN chmod +x /tini
+COPY 20-install_steamcmd.sh /docker-entrypoint.d/
+COPY ld-steamcmd.conf /etc/ld.so.conf.d/steamcmd.conf
+
+RUN ldconfig
 
 USER steam
 
-# put steamcmd.sh in PATH
-RUN set -x \
- && echo 'PATH=$PATH:/home/steam/steamcmd/linux32' >> /home/steam/.bashrc
+VOLUME /steamlibrary
+VOLUME /home/steam/steamcmd
 
-VOLUME /data
-
-ENTRYPOINT ["/tini", "--"]
+WORKDIR /home/steam
