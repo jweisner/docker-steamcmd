@@ -20,6 +20,4 @@ RUN ldconfig
 
 USER steam
 
-VOLUME /home/steam
-
 WORKDIR /home/steam
